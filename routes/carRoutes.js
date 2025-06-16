@@ -10,7 +10,7 @@ router.post("/submit",async(req,res)=>{
         res.status(201).json({message:"Form submitted Successfully"})
     }
     catch(err){
-        res.status(500).json({error:'Failed TO submit form'})
+        res.status(500).json({error:`Failed TO submit form ${err}`})
     }
 })
 router.get('/all', async (req, res) => {
