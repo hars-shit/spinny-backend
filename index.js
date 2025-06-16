@@ -1,19 +1,26 @@
-const express=require("express")
-const mongoose=require("mongoose")
-const cors=require("cors")
-const carRoutes=require("./routes/carRoutes.js")
-const app=express()
-const PORT=5000
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const carRoutes = require("./routes/carRoutes");
 
-app.use(cors())
-app.use(express.json())
+const app = express();
+let isConnected = false;
 
-app.use("/api/cars",carRoutes);
+app.use(cors());
+app.use(express.json());
+app.use("/api/cars", carRoutes);
 
-mongoose.connect('mongodb+srv://upadhyayharshit05:7kBDgfDuNbc0cfIQ@cluster0.jujvf30.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+async function connectDB() {
+  if (isConnected) return;
+  await mongoose.connect(
+    'mongodb+srv://upadhyayharshit05:7kBDgfDuNbc0cfIQ@cluster0.jujvf30.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  );
+  isConnected = true;
+  console.log("Connected to MongoDB");
+}
 
-.then(() => {
-    console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-  })
-  .catch(err => console.error('MongoDB error:', err));
+module.exports = async (req, res) => {
+  await connectDB();
+  return app(req, res);
+};
